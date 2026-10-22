@@ -6,7 +6,7 @@ import { MdOutlineDiamond } from "react-icons/md";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function About() {
-  const { isMobile, isTablet } = useWindowSize();
+  const { isTablet } = useWindowSize();
 
   return (
     <div className="page-wrapper">
