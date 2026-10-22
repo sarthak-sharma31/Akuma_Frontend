@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RiSkullLine } from "react-icons/ri";
 import { FiRefreshCw } from "react-icons/fi";
 import ProductCard from "../components/ProductCard";
@@ -16,22 +16,48 @@ export default function Shop() {
   const [sort, setSort] = useState("default");
   const { isMobile } = useWindowSize();
 
-  useEffect(() => { fetchProducts(); }, [active]);
+  // useEffect(() => { fetchProducts(); }, [active]);
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = active !== "All" ? { category: active } : {};
-      const data = await getProducts(params);
-      if (data.success) setProducts(data.products);
-      else setError("Failed to load products");
-    } catch {
-      setError("Could not connect to server");
-    } finally {
-      setLoading(false);
+  // const fetchProducts = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const params = active !== "All" ? { category: active } : {};
+  //     const data = await getProducts(params);
+  //     if (data.success) setProducts(data.products);
+  //     else setError("Failed to load products");
+  //   } catch {
+  //     setError("Could not connect to server");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  
+const fetchProducts = useCallback(async () => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const params = active !== "All" ? { category: active } : {};
+    const data = await getProducts(params);
+
+    if (data.success) {
+      setProducts(data.products);
+    } else {
+      setError("Failed to load products");
     }
-  };
+  } catch {
+    setError("Could not connect to server");
+  } finally {
+    setLoading(false);
+  }
+}, [active]);
+
+useEffect(() => {
+  fetchProducts();
+}, [fetchProducts]);
+
 
   let displayed = [...products];
   if (sort === "price-asc")  displayed.sort((a, b) => a.price - b.price);
